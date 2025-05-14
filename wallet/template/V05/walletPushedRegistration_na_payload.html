@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push Authorization Request Scope</title>
+</head>
+<body>
+    
+    <h1>WALLET Test V 0.5</h1>
+    <button onclick="getpushedAuthorization()">2. Push Authorization Request Scope</button>
+
+    <h1>2. Push Authorization Request Scope</h1>
+    <p>{{ url}}</p>
+
+    <p style="color: blue;">Headers:</p>
+    <pre style="line-height: 1.2;" id="json-header"></pre>
+
+    <p style="color: blue;">Payload:</p>
+    <pre style="line-height: 1.2;" id="json-payload"></pre>
+    
+    <script>
+        
+        var payload = "{{ payload }}"
+        var payload = payload.replace(/&amp;/g, '&');
+        var payload = payload.replace(/&#34;/g, '"');
+        
+        document.getElementById('json-payload').textContent = JSON.stringify(payload, null, 2);
+
+        var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+
+        document.getElementById('json-header').textContent = JSON.stringify(headers, null, 2);
+
+        function getpushedAuthorization() {
+            window.location.href = 'pushedAuthorization_na_scope';
+        }
+    </script>
+
+</body>
+</html>

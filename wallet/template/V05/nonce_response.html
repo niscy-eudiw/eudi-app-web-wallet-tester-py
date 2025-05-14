@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nonce</title>
+      
+    <style>
+        pre {
+            max-width: 100%;
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            line-height: 0.9;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>WALLET Test</h1>
+    <button onclick="getCredential()">Select Proof Type</button>
+
+    
+    <p style="color: blue;">Nonce response:</p>
+    <pre id="nonce" style="background: #f4f4f4; padding: 10px; border-radius: 8px;"></pre>
+
+
+    <script>
+        const response = {{ response | tojson(indent=2) }};
+
+        document.getElementById("nonce").textContent = JSON.stringify(response, null, 2);
+
+        function getCredential() {
+            window.location.href = "proof_type";
+        }
+    </script>
+
+</body>
+</html>

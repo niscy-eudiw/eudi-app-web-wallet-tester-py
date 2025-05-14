@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token response</title>
+      
+    <style>
+        pre {
+            max-width: 100%;
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            line-height: 0.9;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>WALLET Test V 0.5</h1>
+    <button onclick="getCredential()">Select Proof Type</button>
+    <button onclick="getnonce()">Nonce (Optional)</button>
+
+    <p style="color: blue;">Token response: </p>
+    <pre>
+        {% macro format_json(token, indent=0) %}
+        {% for key, value in token.items() %}
+            {{ ' ' * indent }}{{ key }}: 
+                {% if value is mapping %}
+                    {{ format_json(value, indent + 2) }}
+                {% else %}
+                {{ value }}
+            {% endif %}
+        {% endfor %}
+        {% endmacro %}
+
+        {{ format_json(token) }}
+    </pre>
+
+    <script>
+        function getCredential() {
+            window.location.href = "proof_type";
+        }
+        function getnonce() {
+            window.location.href = "nonce_payload";
+        }
+    </script>
+
+</body>
+</html>

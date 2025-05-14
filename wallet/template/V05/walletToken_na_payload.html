@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intial page wallet</title>
+
+    <style>
+        #pay {
+            line-height: 1.2;
+            max-height: 90vh;
+            overflow: auto; 
+            padding: 10px; 
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <h1>WALLET Test</h1>
+    <button onclick="getToken()">4. Token request</button>
+
+    <h1>4. Token request:</h1>
+        
+    <p style="color: blue;">Header:</p>
+    <pre style="line-height: 1.2;" id="head"></pre>
+
+    <p style="color: blue;">Payload:</p>
+    <pre id="pay"></pre>
+
+    <script>
+        
+        var cred = "{{ url }}?grant_type=authorization_code&redirect_uri={{ red }}&client_id={{ client_id }}&state={{ state }}&code={{ code }}&code_verifier=FnWCRIhpJtl6IYwVVYB8gZkQsmvBVLfU4HQiABPopYQ6gvIZBwMrXg"
+
+        document.getElementById('pay').textContent = JSON.stringify(cred, null, 2);
+
+        var credHea ={
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+
+        document.getElementById('head').textContent = JSON.stringify(credHea, null, 2);
+        
+        function getToken() {
+            window.location.href = 'token_na';
+        }
+    </script>
+
+</body>
+</html>

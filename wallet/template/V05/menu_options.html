@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Options</title>
+</head>
+<body>
+    <h1>Wallet Test Options V 0.5</h1>
+
+    <form action="/manager" method="post" onsubmit="return checkSubmit()">
+        <fieldset>
+            <legend>Pushed Authorization Options (PAR)</legend>
+            <label for="scope">scope</label>
+            <input type="checkbox" id="scope" name="par" value="scope">
+
+            <div id="additionalOptions_scope" style="display: none;">
+                <p></p>
+                <!-- <label for="mdl_mso_mdoc">mDL mso_mdoc</label>
+                <input type="checkbox" id="mDL_mso_mdoc" name="scopeOption" value="mdl_mso_mdoc">
+                <label for="pid_mso_mdoc">PID mso_mdoc</label>
+                <input type="checkbox" id="pid_mso_mdoc" name="scopeOption" value="pid_mso_mdoc">
+                
+                <label for="mdl_vc_sd-jwt">mDL vc+sd-jwt</label>
+                <input type="checkbox" id="mDL_vc_sd-jwt" name="scopeOption" value="mdl_vc_sd-jwt">
+                <label for="pid_vc_sd-jwt">PID vc+sd-jwt</label>
+                <input type="checkbox" id="pid_vc_sd-jwt" name="scopeOption" value="pid_vc_sd-jwt"> -->
+            
+                <!-- <button type="button" id="clearRadio">Clear</button> -->
+            </div>
+
+            <p></p>
+            <label for="authorization_details">authorization details</label>
+            <input type="checkbox" id="authorization_details" name="par" value="authorization_details">
+            
+            <div id="additionalOptions_authorization_details" style="display: none;">
+                <p></p>
+            </div>
+        </fieldset>
+        <p></p>
+        <div id="credentialTypeMessage">
+        </div>
+        <p></p>
+        <input type="submit" value="Submit Test">
+    </form>
+
+    <script>
+        function checkSubmit() {
+            var checkboxesScope = document.querySelectorAll('#additionalOptions_scope input[name="scopeOption"]');
+            var scope = document.getElementById('scope').checked;
+            var authorization_details = document.getElementById('authorization_details').checked;
+            var checkboxesAuthDetails = document.querySelectorAll('#additionalOptions_authorization_details input[name="authorization_details_Option"]');
+            var checkboxesPar = document.querySelectorAll('input[name="par"]');
+            var isCheckedScope = false;
+            var isCheckedAuthDetails = false;
+            var isCheckedPar = false;
+
+            checkboxesScope.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    isCheckedScope = true;
+                }
+            });
+
+            checkboxesAuthDetails.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    isCheckedAuthDetails = true;
+                }
+            });
+
+            checkboxesPar.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    isCheckedPar = true;
+                }
+            });
+
+            if (!scope && !authorization_details) {
+                alert('Please select at least one PAR option');
+                return false;
+            }
+
+            if (scope && !isCheckedScope) {
+                alert('Please select at least one option from Scope ');
+                return false;
+            }
+
+            if (authorization_details && !isCheckedAuthDetails) {
+                alert('Please select at least one option from Authorization Details.');
+                return false;
+            }
+
+            return true;
+        }
+        document.getElementById('scope').addEventListener('change', function() {
+            var additionalOptions_authorization_details = document.getElementById('additionalOptions_scope');
+            additionalOptions_authorization_details.style.display = this.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('authorization_details').addEventListener('change', function() {
+            var additionalOptions_authorization_details = document.getElementById('additionalOptions_authorization_details');
+            additionalOptions_authorization_details.style.display = this.checked ? 'block' : 'none';
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var containerAuthorizationDetails = document.getElementById('additionalOptions_authorization_details');
+            var containerScope = document.getElementById('additionalOptions_scope');
+
+            var credentialIdentifiers = {{ credential_identifier | tojson }};
+            var displayNames = {{ display_name | tojson }};
+
+            credentialIdentifiers.forEach(function(identifier, index) {
+                var displayText = displayNames[index]; // Obtém o nome correspondente
+
+                // 🔹 Adiciona opções para authorization_details
+                var labelAuth = document.createElement('label');
+                labelAuth.setAttribute('for', 'auth_' + identifier);
+                labelAuth.textContent = displayText;  
+
+                var inputAuth = document.createElement('input');
+                inputAuth.setAttribute('type', 'checkbox');
+                inputAuth.setAttribute('id', 'auth_' + identifier);
+                inputAuth.setAttribute('name', 'authorization_details_Option');
+                inputAuth.setAttribute('value', identifier); 
+
+                containerAuthorizationDetails.appendChild(labelAuth);
+                containerAuthorizationDetails.appendChild(inputAuth);
+
+                // 🔹 Adiciona opções para scope
+                var labelScope = document.createElement('label');
+                labelScope.setAttribute('for', 'scope_' + identifier);
+                labelScope.textContent = displayText;  
+
+                var inputScope = document.createElement('input');
+                inputScope.setAttribute('type', 'checkbox');
+                inputScope.setAttribute('id', 'scope_' + identifier);
+                inputScope.setAttribute('name', 'scopeOption');
+                inputScope.setAttribute('value', identifier); 
+
+                containerScope.appendChild(labelScope);
+                containerScope.appendChild(inputScope);
+            });
+        });
+
+        document.getElementById('clearRadio').addEventListener('click', function() {
+            var radioButtons = document.querySelectorAll('#additionalOptions_scope input[type="radio"]');
+            radioButtons.forEach(function(button) {
+                button.checked = false;
+            });
+        });
+
+        function checkCredentialType() {
+            var authorizationDetailsCheckboxes = document.querySelectorAll('#additionalOptions_authorization_details input[type="checkbox"]:checked');
+            var scopeOptionsCheckboxes = document.querySelectorAll('#additionalOptions_scope input[type="radio"]:checked');
+            var isScopeOptionSelected = false;
+
+            scopeOptionsCheckboxes.forEach(function(checkbox) {
+                if (checkbox.checked) {
+                    isScopeOptionSelected = true;
+                }
+            });
+ 
+
+            if (authorizationDetailsCheckboxes.length > 1 || isScopeOptionSelected == true && authorizationDetailsCheckboxes.length == 1) {
+                document.getElementById('credentialTypeMessage').textContent = 'Type: batch credential';
+            } else {
+                document.getElementById('credentialTypeMessage').textContent = 'Type: credential';
+            }
+        }
+
+        document.getElementById('scope').addEventListener('change', checkCredentialType);
+        document.getElementById('authorization_details').addEventListener('change', checkCredentialType);
+        document.getElementById('additionalOptions_scope').addEventListener('change', checkCredentialType);
+        document.getElementById('additionalOptions_authorization_details').addEventListener('change', checkCredentialType);
+    </script>
+</body>
+</html>

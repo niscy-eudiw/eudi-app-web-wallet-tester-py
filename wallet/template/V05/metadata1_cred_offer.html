@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metadata response</title>
+    
+    <style>
+        pre {
+            max-width: 100%;
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            line-height: 0.7    ;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>WALLET Test V 0.5</h1>
+    <button onclick="getpid()">Push Authorization Request authorization details</button>
+
+    <p style="color: blue;">Metadata response: </p>
+    <pre>
+    {% macro format_json(metadata, indent=0) %}
+        {% for key, value in metadata.items() %}
+            {{ ' ' * indent }}{{ key }}: 
+                {% if value is mapping %}
+                    {{ format_json(value, indent + 2) }}
+                {% else %}
+                            {{ value }}
+            {% endif %}
+        {% endfor %}
+    {% endmacro %}
+
+    {{ format_json(metadata) }}
+    </pre>
+    
+    <h1>Metadata request: </h1>
+    <p>{{ url }}</p>
+
+
+    <script>
+        function getpid() {
+            window.location.href = 'cred_off';
+        }
+    </script>
+
+</body>
+</html>

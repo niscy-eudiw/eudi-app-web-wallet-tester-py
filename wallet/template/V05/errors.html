@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+      
+    <style>
+        pre {
+            max-width: 100%;
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            line-height: 0.9;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>WALLET Test</h1>
+    <button onclick="wallet()">{{ tit }}</button>
+
+    
+    <p style="color: blue;">Error response:</p>
+    <pre>
+        {% macro format_json(err, indent=0) %}
+            {% for key, value in err.items() %}
+                {{ ' ' * indent }}{{ key }}: 
+                    {% if value is mapping %}
+                        {{ format_json(value, indent + 2) }}
+                    {% else %}
+                                {{ value }}
+                {% endif %}
+            {% endfor %}
+        {% endmacro %}
+    
+        {{ format_json(err) }}
+    </pre>
+
+    <script>
+        function wallet() {
+            window.location.href = '{{ opt }}';
+        }
+    </script>
+
+</body>
+</html>
