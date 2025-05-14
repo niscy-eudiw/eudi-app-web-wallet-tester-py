@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Options</title>
+</head>
+<body>
+    <h1>Authorization Details:</h1>
+    
+    <form action="/auth_type_manager" method="post" onsubmit="return checkSubmit()">
+
+        <label for="pkce">PKCE</label>
+        <input type="checkbox" id="pkce" name="type_auth" value="pkce">
+        <label for="par">PAR</PARam></label>
+        <input type="checkbox" id="par" name="type_auth" value="par">
+
+        <p>In case you do not want ANY OF THE OPTIONS above, just click SUBMIT.</p>
+        <input type="submit" value="Submit">
+      </form> 
+
+    <script>
+    
+    </script>
+</body>
+</html>

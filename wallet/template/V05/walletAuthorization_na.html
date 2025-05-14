@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token request Payload</title>
+</head>
+<body>
+    
+    <h1>WALLET Test V 0.5</h1>
+    <button onclick="getToken()">4. Token request Payload</button>
+    
+    <p style="color: blue;">Authorization response:</p>
+
+    <p style="color: blue;">state: </p>
+    <p>{{state}}</p>
+
+    <p style="color: blue;">code: </p>
+    <p style="max-width: 100%; width: 100%; overflow: auto;">{{code}}</p>
+
+    <p style="color: blue;">iss: </p>
+    <p>{{iss}}</p>
+
+    <script>
+        function getToken() {
+            window.location.href = 'token_na_payload';
+        }
+    </script>
+
+</body>
+</html>

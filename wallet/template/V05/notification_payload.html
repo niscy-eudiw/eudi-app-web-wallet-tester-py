@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification payload</title>
+      
+    <style>
+        pre {
+            max-width: 100%;
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            line-height: 0.9;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>WALLET Test V 0.5</h1>
+    <button onclick="getCredential()">{{ tit }}</button>
+    
+    <h1>5. Notification request:</h1>
+    <p>{{ url }}</p>
+
+    <p style="color: blue;">Header:</p>
+    <pre style="line-height: 1.2;" id="head"></pre>
+
+    <p style="color: blue;">Payload:</p>
+    <pre style="line-height: 1.2;" id="pay"></pre>
+    <script>      
+        var notification_id = "{{ notification_id }}"
+        var notification_id = notification_id.replace(/&amp;/g, '&');
+        var notification_id = notification_id.replace(/&#39;/g, '"');
+        
+        try {
+            const notificationArray = JSON.parse(notification_id);
+
+            const creds = notificationArray.map(id => ({
+                notification_id: id["notification_id"],
+                event: "credential_accepted"
+            }));
+
+            document.getElementById('pay').innerHTML = creds.map((c, i) => {
+                return `
+                    <div style="margin-bottom: 0px; border: 1px solid #ccc; padding: 0px;">
+                        <strong>Payload ${i + 1}:</strong>
+                        <pre>${JSON.stringify(c, null, 2)}</pre>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (e) {
+            document.getElementById('pay').textContent = "Error";
+        }
+
+        var credHea ={
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + "{{ token }}"
+        }
+
+        document.getElementById('head').textContent = JSON.stringify(credHea, null, 2);
+
+        function getCredential() {
+            window.location.href = '{{ opt }}';
+        }
+    </script>
+
+</body>
+</html>

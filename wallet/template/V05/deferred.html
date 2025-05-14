@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deferred</title>
+      
+    <style>
+        pre {
+            max-width: 100%;
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            line-height: 0.9;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>WALLET Test</h1>
+    <button onclick="wallet()">{{ tit }}</button>
+    <button onclick="home_wallet()">{{ home_tit }}</button>
+
+    
+    <p style="color: blue;">Deferred response:</p>
+    {% for item in creden %}
+        <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; border-radius: 8px; background-color: #f9f9f9;">
+            
+            {% if item.credential_configuration_id %}
+                <p><strong>Credential: {{ item.credential_configuration_id }}</strong></p>
+            {% endif %}
+
+            {% if item.cred.credentials %}
+                {% for cred in item.cred.credentials %}
+                    {% if cred.credential %}
+                        <p><strong>Credential Data:</strong></p>
+                        <pre>{{ cred.credential }}</pre>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% if item.cred.notification_id %}
+                <p><strong>Notification ID:</strong> {{ item.cred.notification_id }}</p>
+            {% endif %}
+
+            {% if item.cred.transaction_id %}
+                <p><strong>Transaction ID:</strong> {{ item.cred.transaction_id }}</p>
+            {% endif %}
+
+            {% if item.cred.error %}
+                <p><strong>Error:</strong> {{ item.cred.error }}</p>
+            {% endif %}
+
+            {% if item.cred.interval %}
+                <p><strong>Interval:</strong> {{ item.cred.interval }}</p>
+            {% endif %}
+
+        </div>
+    {% endfor %}
+
+
+    <script>
+        function wallet() {
+            window.location.href = '{{ opt }}';
+        }
+        function home_wallet() {
+            window.location.href = '{{ home_opt }}';
+        }
+    </script>
+
+</body>
+</html>

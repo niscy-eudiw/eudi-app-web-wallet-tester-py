@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metadata request</title>
+    
+</head>
+<body>
+    
+    <h1>WALLET Test V 0.5</h1>
+    <button onclick="getmeta()"> 1.-b GET METADATA openid-credential-issuer</button>
+
+    <h1>1.b- Metadata request: </h1>
+    <p>{{ url }}</p>
+
+    <script>
+        function getmeta() {
+            window.location.href = 'metadata_na';
+        }
+    </script>
+
+</body>
+</html>

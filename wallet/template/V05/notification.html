@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intial page wallet</title>
+      
+    <style>
+        pre {
+            max-width: 100%;
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            line-height: 0.9;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>WALLET Test</h1>
+    <button onclick="wallet()">{{ tit }}</button>
+
+    
+    <p style="color: blue;">Notification response:</p>
+    <div id="pay">
+        {% for item in response %}
+            <div style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+                <div style="margin-bottom: 1em;">
+                    <strong>Credential: {{ item.credential_configuration_id }}<br></strong>
+                    <strong>Code:</strong> {{ item.code }}<br>
+                    <strong>Text:</strong> {{ item.test if item.test else "" }}<br>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function wallet() {
+            window.location.href = '{{ opt }}';
+        }
+    </script>
+
+</body>
+</html>
