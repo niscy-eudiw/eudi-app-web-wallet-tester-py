@@ -57,7 +57,7 @@ class ConfService:
 
     ################################################################################### V 0.5
 
-    serv = "https://dev.issuer.eudiw.dev/"
+    serv = "https://issuer.eudiw.dev/"
 
     credential_offer = serv + "credential_offer"
 
