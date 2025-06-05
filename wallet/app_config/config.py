@@ -57,7 +57,8 @@ class ConfService:
 
     ################################################################################### V 0.5
 
-    serv = "https://issuer.eudiw.dev/"
+    # serv = "https://issuer.eudiw.dev/"
+    serv = os.getenv("serv_url")
 
     credential_offer = serv + "credential_offer"
 
