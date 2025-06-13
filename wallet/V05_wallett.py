@@ -64,7 +64,8 @@ def metadata1_na():
     url = cfs.v05_metadata1_na
     response = requests.get(url, verify=False)
     
-    session['service_url'] = response.json()["issuer"]
+    session['service_url'] = cfs.serv
+    #session['service_url'] = response.json()["issuer"]
     session['1_pushed_authorization_request_endpoint'] = response.json()['pushed_authorization_request_endpoint']
     session['2_authorization_endpoint'] = response.json()['authorization_endpoint']
     session['3_token_endpoint'] = response.json()['token_endpoint']
@@ -323,7 +324,8 @@ def pushedAuthorization_na_authdetails():
 
 
     if(session['auth_opt'] == 'pkcepar'):
-        url = session['1_pushed_authorization_request_endpoint']
+        #url = session['1_pushed_authorization_request_endpoint']
+        url = cfs.serv + "pushed_authorizationv2"
         payload = 'response_type=code&state=af0ifjsldkj&client_id=ID&redirect_uri=' + cfs.v05_redirect_uri + '&code_challenge=-ciaVij0VMswVfqm3_GK758-_dAI0E9i97hu1SAOiFQ&code_challenge_method=S256&authorization_details=' + session['auth_detail']
         
         headers = {
@@ -335,6 +337,7 @@ def pushedAuthorization_na_authdetails():
         session['request_uri'] = aux['request_uri']
     
     elif(session['auth_opt'] == 'par'):
+        return "1"
         url = session['1_pushed_authorization_request_endpoint']
         payload = 'response_type=code&state=af0ifjsldkj&client_id=ID&redirect_uri=' + cfs.v05_redirect_uri + '&authorization_details=' + session['auth_detail']
         
@@ -347,6 +350,7 @@ def pushedAuthorization_na_authdetails():
         session['request_uri'] = aux['request_uri']
     
     elif(session['auth_opt'] == 'pkce'):
+        return "2"
         url = session['1_pushed_authorization_request_endpoint']
         payload = 'response_type=code&client_id=ID&redirect_uri=' + cfs.v05_redirect_uri + '&code_challenge=-ciaVij0VMswVfqm3_GK758-_dAI0E9i97hu1SAOiFQ&code_challenge_method=S256&authorization_details=' + session['auth_detail']
         
@@ -408,7 +412,8 @@ def authorization_na_payload():
     if(session['auth_opt'] == ''):
         url = session['2_authorization_endpoint'] + session['payload'] 
     else:
-        url = session['2_authorization_endpoint'] + '?client_id=ID&request_uri=' + session['request_uri']
+        url = cfs.serv + '?client_id=ID&request_uri=' + session['request_uri']
+        #url = session['2_authorization_endpoint'] + '?client_id=ID&request_uri=' + session['request_uri']
 
     return render_template('V05/walletAuthorization_na_payload.html', url = url)
 
@@ -416,11 +421,12 @@ def authorization_na_payload():
 def authorization_na():
 
     if(session['auth_opt'] == ''):
-        url = session['2_authorization_endpoint']
-        
+        #url = session['2_authorization_endpoint']
+        url = cfs.serv + "/authorizationV3?client_id=ID&request_uri=urn:uuid:b534ef84-fb2e-437a-9793-a20fa98aefce"
         return render_template('V05/url.html', url = url, uri = session['payload'])
     else:
-        url = session['2_authorization_endpoint']
+        #url = session['2_authorization_endpoint']
+        url = "http://127.0.0.1:5000/authorizationV3"
         uri = "client_id=ID&request_uri=" + session['request_uri']
         return render_template('V05/url.html', url = url, uri = uri)
 
