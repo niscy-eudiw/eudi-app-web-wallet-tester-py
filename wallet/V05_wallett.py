@@ -426,7 +426,7 @@ def authorization_na():
         return render_template('V05/url.html', url = url, uri = session['payload'])
     else:
         #url = session['2_authorization_endpoint']
-        url = "http://127.0.0.1:5000/authorizationV3"
+        url = cfs.serv + "/authorizationV3"
         uri = "client_id=ID&request_uri=" + session['request_uri']
         return render_template('V05/url.html', url = url, uri = uri)
 
