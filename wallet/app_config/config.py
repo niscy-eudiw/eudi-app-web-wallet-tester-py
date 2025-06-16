@@ -29,7 +29,7 @@ class ConfService:
 
     ###################################################################################
 
-    service_url = os.getenv("service_url")
+    service_url = os.getenv("service_url", "https://wallet-tester.projj.eu")
     #service_url = "http://127.0.0.1:5000/"
     #service_url = "https://dev.tester.issuer.eudiw.dev/"
 
