@@ -56,8 +56,9 @@ class ConfService:
     credential_identifier_pid_mdoc = "eu.europa.ec.eudiw.pid_mdoc"
 
     ################################################################################### V 0.5
-    serv = "http://host.docker.internal:5000/"
+    #serv = "http://host.docker.internal:5000/"
     #serv = "https://issuer.eudiw.dev/"
+    serv = "https://issuer-ng.projj.eu/"
 
     credential_offer = serv + "credential_offer"
 

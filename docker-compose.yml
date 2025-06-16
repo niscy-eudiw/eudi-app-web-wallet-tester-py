@@ -5,8 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 5001:5001
+      - 5101:5101
     environment: 
-      - FLASK_RUN_PORT= 5001
-      - service_url= http://localhost:5001/
+      - FLASK_RUN_PORT= 5101
+      - service_url= https://wallet-tester.projj.eu
+      # - service_url= http://localhost:5001/
       # - service_url: https://dev.tester.issuer.eudiw.dev/
