@@ -605,13 +605,15 @@ def credential_na_payload():
 
     if(session['authmode'] == 'credential_offer' or session['authmode'] == 'preauth'):
         if(session['proof_type'][0] == 'jwt'):
-            creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
+            creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
+            #creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
             opt = 'credential_na'
         
             return render_template('V05/walletCredential_na_payload_mdoc_credOffer.html', token = session['access_token'], jwt = cfs.jwt, creden = creden, url = session['4_credential_endpoint'], opt = opt)
 
         elif(session['proof_type'][0] == 'cwt'):
-            creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "cwt", "cwt": "' + cfs.cwt + '"} } ] }'
+            creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
+            #creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "cwt", "cwt": "' + cfs.cwt + '"} } ] }'
             opt = 'credential_na'
         
             return render_template('V05/walletCredential_na_payload_mdoc_credOffer.html', token = session['access_token'], cwt = cfs.cwt, creden = creden, url = session['4_credential_endpoint'], opt = opt)
