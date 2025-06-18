@@ -647,7 +647,8 @@ def credential_na():
                 parte = vct.split("urn:eu.europa.ec.eudi:")[-1].split(":")[0]
                 for each in session.get('credential_configuration_ids', []):
                     if(parte in each):
-                        payload = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
+                        payload = '{"credential_configuration_id": "' + vct + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
+                        #payload = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
             #payload = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
             opt = 'credential_na'
 
@@ -663,7 +664,9 @@ def credential_na():
                 parte = vct.split("urn:eu.europa.ec.eudi:")[-1].split(":")[0]
                 for each in session.get('credential_configuration_ids', []):
                     if(parte in each):
-                        payload = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
+                        
+                        payload = '{"credential_configuration_id": "' + vct + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
+                        #payload = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
             opt = 'credential_na'
 
             headers = {
