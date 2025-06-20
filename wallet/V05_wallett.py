@@ -601,14 +601,13 @@ def nonce_response():
 @V05.route('/credential_mso', methods=['GET','POST'])
 def credential_na_payload():
 
-    creden = ''
+    creden = []
 
     if(session['authmode'] == 'credential_offer' or session['authmode'] == 'preauth'):
         if(session['proof_type'][0] == 'jwt'):
             creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
             #creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
             opt = 'credential_na'
-        
             return render_template('V05/walletCredential_na_payload_mdoc_credOffer.html', token = session['access_token'], jwt = cfs.jwt, creden = creden, url = session['4_credential_endpoint'], opt = opt)
 
         elif(session['proof_type'][0] == 'cwt'):
@@ -640,32 +639,25 @@ def credential_na_payload():
 @V05.route('/credential_na', methods=['GET','POST'])
 def credential_na():
     url = session['4_credential_endpoint'] 
-
+    creden = []
     if(session['authmode'] == 'credential_offer' or session['authmode'] == 'preauth'):
         if(session['proof_type'][0] == 'jwt'):
-            for vct in session['vct_list']:
-                parte = vct.split("urn:eu.europa.ec.eudi:")[-1].split(":")[0]
-                for each in session.get('credential_configuration_ids', []):
-                    if(parte in each):
-                        payload = '{"credential_configuration_id": "' + vct + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
-                        #payload = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
-            #payload = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
+            creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
             opt = 'credential_na'
 
             headers = {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + session['access_token']
             }
-
-            response = requests.request("POST", url, headers=headers, data=payload)
+            response = requests.request("POST", url, headers=headers, data=creden)
             aux = response.json()
+            print(aux)
         elif(session['proof_type'][0] == 'cwt'):
             for vct in session['vct_list']:
                 parte = vct.split("urn:eu.europa.ec.eudi:")[-1].split(":")[0]
                 for each in session.get('credential_configuration_ids', []):
                     if(parte in each):
-                        
-                        payload = '{"credential_configuration_id": "' + vct + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
+                        payload = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
                         #payload = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
             opt = 'credential_na'
 
@@ -722,7 +714,7 @@ def credential_na():
     
     notification_ids = []
     transaction_ids = []
-    print(response.json())
+    
     if('notification_id' in response.json()):
         notification_ids.append({
             "credential_configuration_id": aux,
@@ -760,12 +752,8 @@ def credential_na_payload_sd():
     creden = ''
     if(session['authmode'] == 'credential_offer' or session['authmode'] == 'preauth'):
         if(session['proof_type'][0] == 'jwt'):
-            for vct in session['vct_list']:
-                parte = vct.split("urn:eu.europa.ec.eudi:")[-1].split(":")[0]
-                for each in session.get('credential_configuration_ids', []):
-                    if(parte in each):
-                        creden = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
-            #creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
+            creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
+           #creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
             opt = 'credential_na'
             
             return render_template('V05/walletCredential_na_payload_jwt_credOffer.html', token = session['access_token'], jwt = cfs.jwt, creden = creden, url = session['4_credential_endpoint'], opt = opt)
@@ -799,18 +787,17 @@ def credential_na_payload_sd():
 @V05.route('/credential', methods=['GET','POST'])
 def credential_na_payload_more_than_one():
 
-    creden = ''
+    aux = []
     if(session['authmode'] == 'credential_offer' or session['authmode'] == 'preauth'):
         if(session['proof_type'][0] == 'jwt'):
-            for vct in session['vct_list']:
-                parte = vct.split("urn:eu.europa.ec.eudi:")[-1].split(":")[0]
-                for each in session.get('credential_configuration_ids', []):
-                    if(parte in each):
-                        creden = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
-            #creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
+            for each in session.get('credential_configuration_ids', []):
+                creden = '{"credential_configuration_id": "' + each + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
+                aux.append(creden)
+                
             opt = 'credential_na'
+            session["batch_credential"] = aux
             
-            return render_template('V05/walletCredential_na_payload_jwt_credOffer.html', token = session['access_token'], jwt = cfs.jwt, creden = creden, url = session['4_credential_endpoint'], opt = opt)
+            return render_template('V05/batch_credential_payload.html', token = session['access_token'], jwt = cfs.jwt, creden = aux, url = session['4_credential_endpoint'], opt = opt)
         elif(session['proof_type'][0] == 'cwt'):
             for vct in session['vct_list']:
                 parte = vct.split("urn:eu.europa.ec.eudi:")[-1].split(":")[0]
@@ -819,7 +806,7 @@ def credential_na_payload_more_than_one():
                         creden = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
             opt = 'credential_na'
             
-            return render_template('V05/walletCredential_na_payload_jwt_credOffer.html', token = session['access_token'], cwt = cfs.cwt, creden = creden, url = session['4_credential_endpoint'], opt = opt)
+            return render_template('V05/batch_credential_payload.html', token = session['access_token'], cwt = cfs.cwt, creden = creden, url = session['4_credential_endpoint'], opt = opt)
 
 
     aux = []
@@ -1309,8 +1296,19 @@ def credentialoffer():
 
 @V05.route('/cred_off', methods=['GET','POST'])
 def cred_off():
-    #session['auth_detail'] = json.dumps(session['credential_configuration_ids'])
-    return render_template('V05/walletPushedRegistration_auth_details_payload.html', red = cfs.v05_redirect_uri, auth_detail = session['auth_detail'])
+    
+    url = session['1_pushed_authorization_request_endpoint']
+    
+    if(session['auth_opt'] == 'pkcepar'):
+        payload = 'response_type=code&state=af0ifjsldkj&client_id=ID&redirect_uri=' + cfs.v05_redirect_uri + '&code_challenge=-ciaVij0VMswVfqm3_GK758-_dAI0E9i97hu1SAOiFQ&code_challenge_method=S256&authorization_details=' + session['auth_detail']
+    
+    elif(session['auth_opt'] == 'par'):
+        payload = 'response_type=code&state=af0ifjsldkj&client_id=ID&redirect_uri=' + cfs.v05_redirect_uri + '&authorization_details=' + session['auth_detail']
+    
+    elif(session['auth_opt'] == 'pkce'):
+        payload = 'response_type=code&client_id=ID&redirect_uri=' + cfs.v05_redirect_uri + '&code_challenge=-ciaVij0VMswVfqm3_GK758-_dAI0E9i97hu1SAOiFQ&code_challenge_method=S256&authorization_details=' + session['auth_detail']
+
+    return render_template('V05/walletPushedRegistration_auth_details_payload.html', url = url, payload = payload, red = cfs.v05_redirect_uri, auth_detail = session['auth_detail'])
 
 @V05.route('/auth_type', methods=['GET','POST'])
 def auth_type():
