@@ -644,30 +644,26 @@ def credential_na():
         if(session['proof_type'][0] == 'jwt'):
             creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
             opt = 'credential_na'
+            aux =session['credential_configuration_ids'][0]
 
             headers = {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + session['access_token']
             }
+            
             response = requests.request("POST", url, headers=headers, data=creden)
-            aux = response.json()
-            print(aux)
+
         elif(session['proof_type'][0] == 'cwt'):
-            for vct in session['vct_list']:
-                parte = vct.split("urn:eu.europa.ec.eudi:")[-1].split(":")[0]
-                for each in session.get('credential_configuration_ids', []):
-                    if(parte in each):
-                        payload = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
-                        #payload = '{"format": "dc+sd-jwt", "vct": "' + vct + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
+            creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
             opt = 'credential_na'
+            aux =session['credential_configuration_ids'][0]
 
             headers = {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + session['access_token']
             }
 
-            response = requests.request("POST", url, headers=headers, data=payload)
-            aux = response.json()
+            response = requests.request("POST", url, headers=headers, data=creden)
             
     else:
 
@@ -753,8 +749,8 @@ def credential_na_payload_sd():
     if(session['authmode'] == 'credential_offer' or session['authmode'] == 'preauth'):
         if(session['proof_type'][0] == 'jwt'):
             creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
-           #creden = '{ "credential_requests": [ {"credential_identifier": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' + cfs.jwt + '"} } ] }'
             opt = 'credential_na'
+            aux = session['credential_configuration_ids'][0]
             
             return render_template('V05/walletCredential_na_payload_jwt_credOffer.html', token = session['access_token'], jwt = cfs.jwt, creden = creden, url = session['4_credential_endpoint'], opt = opt)
         elif(session['proof_type'][0] == 'cwt'):
@@ -795,6 +791,7 @@ def credential_na_payload_more_than_one():
                 aux.append(creden)
                 
             opt = 'credential_na'
+            clear_session()
             session["batch_credential"] = aux
             
             return render_template('V05/batch_credential_payload.html', token = session['access_token'], jwt = cfs.jwt, creden = aux, url = session['4_credential_endpoint'], opt = opt)
@@ -872,13 +869,14 @@ def batch_credential_request():
             })
     
     if(transaction_ids != []):
-        session['notification_id'] = notification_ids
+        session['notification_ids'] = notification_ids
         session['transaction_ids'] = transaction_ids
         opt = "deferred_payload"
         tit = 'Deferred'
 
         home_opt = cfs.service_url
         home_tit = 'Wallet Test HOME'
+        
         
         return render_template('V05/wallet_na_mdoc.html', creden = responses, opt = opt, tit = tit, home_opt = home_opt, home_tit = home_tit)
     
