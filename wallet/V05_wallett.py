@@ -89,6 +89,8 @@ def metadata_na():
     session['credential_identifier'] = list(response.json()['credential_configurations_supported'])
     session['url_nonce'] = response.json()['nonce_endpoint']
 
+    session['batch_size'] = response.json()['batch_credential_issuance']['batch_size']
+
     scope = []
     vct = []
     display = []
@@ -131,15 +133,21 @@ def metadata_na():
 
 @V05.route('/menu_options', methods=['GET','POST'])
 def menu_options():
+    return redirect(url_for('V05.manager'))
     return render_template('V05/menu_options.html', 
                            credential_identifier = session['credential_identifier'], scope_list = session['scope_list'], 
                            display_name = session["display_name"])
 
-@V05.route('/manager', methods=['POST'])
+@V05.route('/manager', methods=['GET','POST'])
 def manager():
-    session['par'] = request.form.getlist('par')
-    session['scopeOption'] = request.form.getlist('scopeOption')
-    session['authorization_details_Option'] = request.form.getlist('authorization_details_Option')
+    
+    session['par'] = ["scope"]
+    session['scopeOption'] = ["eu.europa.ec.eudi.age_verification_mdoc"]
+    session['authorization_details_Option'] = [""]
+
+    # session['par'] = request.form.getlist('par')
+    # session['scopeOption'] = request.form.getlist('scopeOption')
+    # session['authorization_details_Option'] = request.form.getlist('authorization_details_Option')
 
 
     print("Opções selecionadas do par:", session['par'])
@@ -628,7 +636,13 @@ def credential_na_payload():
             aux = session['scopeOption'][0]
             
     if(session['proof_type'][0] == 'jwt'):
-        creden = '{"credential_configuration_id": "' + aux + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
+        creden = {
+            "credential_configuration_id": aux,
+            "proof": {
+                "proof_type": "jwt",
+                "jwt": [cfs.jwt] * session['batch_number']
+            }
+        }
     elif(session['proof_type'][0] == 'cwt'):
         creden = '{"credential_configuration_id": "' + aux + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
     
@@ -642,7 +656,7 @@ def credential_na():
     creden = []
     if(session['authmode'] == 'credential_offer' or session['authmode'] == 'preauth'):
         if(session['proof_type'][0] == 'jwt'):
-            creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  cfs.jwt + '"} }'
+            creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  [cfs.jwt] * session['batch_number'] + '"} }'
             opt = 'credential_na'
             aux =session['credential_configuration_ids'][0]
 
@@ -1335,12 +1349,14 @@ def auth_type_manager():
 
 @V05.route("/proof_type", methods=['GET','POST'])
 def proof_type():
-    return render_template('V05/proof_type.html')
+    return render_template('V05/proof_type.html', batch_size = session['batch_size'])
 
 @V05.route('/proof_type_manager', methods=['GET','POST'])
 def proof_type_manager():
     
     proof_type = request.form.getlist('proof_type')
+    session['batch_number'] = int(request.form['batch_number'])
+
 
     print("Opções selecionadas do proof_type:", proof_type)
     session['proof_type'] = proof_type
