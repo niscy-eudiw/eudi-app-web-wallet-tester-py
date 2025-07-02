@@ -636,13 +636,22 @@ def credential_na_payload():
             aux = session['scopeOption'][0]
             
     if(session['proof_type'][0] == 'jwt'):
-        creden = {
-            "credential_configuration_id": aux,
-            "proof": {
-                "proof_type": "jwt",
-                "jwt": [cfs.jwt] * session['batch_number']
+        if(session['batch_number'] == 1):
+            creden = {
+                "credential_configuration_id": aux,
+                "proof": {
+                    "proof_type": "jwt",
+                    "jwt": [cfs.jwt] * session['batch_number']
+                }
             }
-        }
+        else:
+            creden = {
+                "credential_configuration_id": aux,
+                "proofs": {
+                    #"proof_type": "jwt",
+                    "jwt": [cfs.jwt] * session['batch_number']
+                }
+            }
     elif(session['proof_type'][0] == 'cwt'):
         creden = '{"credential_configuration_id": "' + aux + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
     
@@ -656,16 +665,29 @@ def credential_na():
     creden = []
     if(session['authmode'] == 'credential_offer' or session['authmode'] == 'preauth'):
         if(session['proof_type'][0] == 'jwt'):
-            creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  [cfs.jwt] * session['batch_number'] + '"} }'
-            opt = 'credential_na'
-            aux =session['credential_configuration_ids'][0]
+            if(session['batch_number'] == 1):
+                creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "jwt", "jwt": "' +  [cfs.jwt] * session['batch_number'] + '"} }'
+                opt = 'credential_na'
+                aux =session['credential_configuration_ids'][0]
 
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + session['access_token']
-            }
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + session['access_token']
+                }
+                
+                response = requests.request("POST", url, headers=headers, data=creden)
             
-            response = requests.request("POST", url, headers=headers, data=creden)
+            else:
+                creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proofs": { "proof_type": "jwt", "jwt": "' +  [cfs.jwt] * session['batch_number'] + '"} }'
+                opt = 'credential_na'
+                aux =session['credential_configuration_ids'][0]
+
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + session['access_token']
+                }
+                
+                response = requests.request("POST", url, headers=headers, data=creden)
 
         elif(session['proof_type'][0] == 'cwt'):
             creden = '{"credential_configuration_id": "' + session['credential_configuration_ids'][0] + '", "proof": { "proof_type": "cwt", "cwt": "' +  cfs.cwt + '"} }'
@@ -692,19 +714,38 @@ def credential_na():
                 aux = session['scopeOption'][0]
 
         if(session['proof_type'][0] == 'jwt'):
-            payload = json.dumps({
-                "credential_configuration_id": aux,
-                "proof": {
-                    "proof_type": "jwt",
-                    "jwt": cfs.jwt
+        
+            if(session['batch_number'] == 1):
+                payload = json.dumps({
+                    "credential_configuration_id": aux,
+                    "proof": {
+                        "proof_type": "jwt",
+                        "jwt": cfs.jwt
+                    }
+                })
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + session['access_token']
                 }
-            })
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + session['access_token']
-            }
 
-            response = requests.request("POST", url, headers=headers, data=payload)
+                response = requests.request("POST", url, headers=headers, data=payload)
+            else:
+                jwt_list = [cfs.jwt for _ in range(session['batch_number'])] 
+
+                payload = {
+                    "credential_configuration_id": aux,
+                    "proofs": {
+                        "jwt": jwt_list
+                    }
+                }
+
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + session['access_token']
+                }
+
+                response = requests.post(url, headers=headers, json=payload)
+
         
         elif(session['proof_type'][0] == 'cwt'):
             aux = aux.split("urn:")[-1].split(".1")[0]
