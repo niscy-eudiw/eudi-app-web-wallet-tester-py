@@ -736,10 +736,15 @@ def credential_na():
         home_tit = 'Wallet Test HOME'
 
         return render_template('V05/wallet_na_sd.html', creden = response.json(), opt = opt, tit = tit, home_opt = home_opt, home_tit = home_tit)
+    
     else:
         opt = cfs.service_url
         tit = 'Wallet Test HOME'
-        return render_template('V05/errors.html', err = response.json(), opt = opt, tit = tit)
+        return render_template('V05/wallet_na.html', creden = response.json(), home_opt = opt, home_tit = tit)
+    # else:
+    #     opt = cfs.service_url
+    #     tit = 'Wallet Test HOME'
+    #     return render_template('V05/errors.html', err = response.json(), opt = opt, tit = tit)
 
 @V05.route('/credential_sd_jwt', methods=['GET','POST'])
 def credential_na_payload_sd():
@@ -854,6 +859,7 @@ def batch_credential_request():
 
     notification_ids = []
     transaction_ids = []
+    cred = []
     
     for response in responses:
         if 'notification_id' in response["cred"]:
@@ -866,8 +872,13 @@ def batch_credential_request():
                 "credential_configuration_id": response["credential_configuration_id"],
                 "transaction_id": response["cred"]['transaction_id']
             })
+        elif 'transaction_id' not in response["cred"] and 'notification_id' not in response["cred"]:
+            cred.append({
+                "credential"
+                "credential_configuration_id": response["credential_configuration_id"]
+            })
     
-    if(transaction_ids != []):
+    if transaction_ids:
         session['notification_ids'] = notification_ids
         session['transaction_ids'] = transaction_ids
         opt = "deferred_payload"
@@ -879,7 +890,7 @@ def batch_credential_request():
         
         return render_template('V05/wallet_na_mdoc.html', creden = responses, opt = opt, tit = tit, home_opt = home_opt, home_tit = home_tit)
     
-    elif(notification_ids != []):
+    elif notification_ids:
         session['notification_ids'] = notification_ids
         session['transaction_ids'] = transaction_ids
         
@@ -890,7 +901,12 @@ def batch_credential_request():
         home_tit = 'Wallet Test HOME'
         
         return render_template('V05/wallet_na_mdoc.html', creden = responses, opt = opt, tit = tit, home_opt = home_opt, home_tit = home_tit)
-
+    
+    elif cred:
+        opt = cfs.service_url
+        tit = 'Wallet Test HOME'
+        return render_template('V05/wallet_na_batch.html', creden = responses, home_opt = opt, home_tit = tit)
+   
     else:
         opt = cfs.service_url
         tit = 'Wallet Test HOME'
@@ -992,10 +1008,11 @@ def credential_na_sd():
         tit = 'Deferred'
 
         return render_template('V05/wallet_na_sd.html', creden = response.json(), opt = opt, tit = tit)
+
     else:
         opt = cfs.service_url
         tit = 'Wallet Test HOME'
-        return render_template('V05/errors.html', err = response.json(), opt = opt, tit = tit)
+        return render_template('V05/wallet_na.html', creden = response.json(), home_opt = opt, home_tit = tit)
 
 
 @V05.route('/batch_credential_na_payload', methods=['GET','POST'])
