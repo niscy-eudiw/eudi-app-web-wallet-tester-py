@@ -62,9 +62,10 @@ class ConfService:
 
     credential_offer = serv + "credential_offer"
 
-    v05_metadata1_na = serv + ".well-known/openid-configuration"
+    #v05_metadata1_na = serv + ".well-known/openid-configuration"
+    v05_metadata1_na = serv + ".well-known/openid-credential-issuer"
     
-    v05_metadata2_na = "/.well-known//openid-credential-issuer"
+    v05_metadata2_na = serv + "/.well-known/oauth-authorization-server"
     
     v05_redirect_uri = service_url + "redirect_na"
 

@@ -64,31 +64,12 @@ def metadata1_na():
     url = cfs.v05_metadata1_na
     response = requests.get(url, verify=False)
     
-    session['service_url'] = response.json()["issuer"]
-    session['1_pushed_authorization_request_endpoint'] = response.json()['pushed_authorization_request_endpoint']
-    session['2_authorization_endpoint'] = response.json()['authorization_endpoint']
-    session['3_token_endpoint'] = response.json()['token_endpoint']
-    session['4_credential_endpoint'] = response.json()['credential_endpoint']
-
-    return render_template('V05/metadata2.html', metadata = response.json(), url = url)
-    
-
-@V05.route('/getmeta_na', methods=['GET','POST'])
-def getmeta_na():
-    url = session['service_url'] + cfs.v05_metadata2_na
-    return render_template('V05/getmetadata2.html', url = url)
-
-@V05.route('/metadata_na', methods=['GET','POST'])
-def metadata_na():
-
-    url = session['service_url'] + cfs.v05_metadata2_na
-    response = requests.get(url, verify=False)
-
     session['6_deferred_endpoint'] = response.json()['deferred_credential_endpoint']
     session['7_notification_endpoint'] = response.json()["notification_endpoint"]
     session['credential_identifier'] = list(response.json()['credential_configurations_supported'])
     session['url_nonce'] = response.json()['nonce_endpoint']
-
+    session['4_credential_endpoint'] = response.json()['credential_endpoint']
+    
     scope = []
     vct = []
     display = []
@@ -120,6 +101,24 @@ def metadata_na():
     session['scope_list'] = scope
     unique = set(scope)
     scope_list = list(unique)
+
+    return render_template('V05/metadata2.html', metadata = response.json(), url = url)
+    
+
+@V05.route('/getmeta_na', methods=['GET','POST'])
+def getmeta_na():
+    url = cfs.v05_metadata2_na
+    return render_template('V05/getmetadata2.html', url = url)
+
+@V05.route('/metadata_na', methods=['GET','POST'])
+def metadata_na():
+
+    url = cfs.v05_metadata2_na
+    response = requests.get(url, verify=False)
+    session['service_url'] = response.json()["issuer"]
+    session['1_pushed_authorization_request_endpoint'] = response.json()['pushed_authorization_request_endpoint']
+    session['2_authorization_endpoint'] = response.json()['authorization_endpoint']
+    session['3_token_endpoint'] = response.json()['token_endpoint']
 
     if(session['authmode'] == 'preauth'):
         return redirect('token_preAuth_payload')
