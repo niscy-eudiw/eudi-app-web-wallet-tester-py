@@ -82,8 +82,7 @@ def metadata1_na():
             vct.append(value_vct)
             session[elemento2_key] = value_vct
 
-        display_name = elemento2_value["display"]
-        display_name = display_name[0]["name"]
+        display_name = elemento2_value["credential_metadata"]["display"][0]["name"]
         display.append(display_name)
 
     session["display_name"] = display
